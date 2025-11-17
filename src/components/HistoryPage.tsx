@@ -68,7 +68,7 @@ export default function HistoryPage({
     onLogout?.();
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    navigate("/studio-login");
+    navigate("/");
   };
 
   const fetchHistory = async (opts = { limit: 5 }) => {
@@ -208,7 +208,7 @@ export default function HistoryPage({
                   onLogout?.();
                   localStorage.removeItem("token");
                   localStorage.removeItem("user");
-                  navigate("/studio-login");
+                  navigate("/");
                 }}
                 className="px-4 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg flex items-center gap-2"
                 whileHover={{ scale: 1.05 }}

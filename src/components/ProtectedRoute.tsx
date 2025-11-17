@@ -9,7 +9,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    return <Navigate to="/studio-login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;

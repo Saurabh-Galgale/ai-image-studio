@@ -30,7 +30,12 @@ const API_BASE = "http://localhost:4000";
 const GET_HISTORY_URL = `${API_BASE}/generations`;
 const POST_GENERATE_URL = `${API_BASE}/generations`;
 
-const ALLOWED_STYLES = ["cartoon", "3d-render", "oil-painting", "editorial"] as const;
+const ALLOWED_STYLES = [
+  "cartoon",
+  "3d-render",
+  "oil-painting",
+  "editorial",
+] as const;
 
 type AllowedStyle = (typeof ALLOWED_STYLES)[number];
 
@@ -78,7 +83,9 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
   const [style, setStyle] = useState<AllowedStyle>(ALLOWED_STYLES[0]);
 
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedImage, setGeneratedImage] = useState<ImageRecord | null>(null);
+  const [generatedImage, setGeneratedImage] = useState<ImageRecord | null>(
+    null
+  );
 
   const [showModal, setShowModal] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
@@ -97,7 +104,7 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
     } catch (_) {}
 
     if (onLogout) onLogout();
-    navigate("/studio-login");
+    navigate("/");
   };
 
   // -----------------------------------
@@ -295,8 +302,7 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
   // GENERATE IMAGE (response kept as ANY)
   // -----------------------------------
 
-  const canGenerate =
-    !!uploadedFile && !isResizing && !isGenerating;
+  const canGenerate = !!uploadedFile && !isResizing && !isGenerating;
 
   const handleGenerate = useCallback(async () => {
     if (!uploadedFile) {
@@ -325,9 +331,7 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
         const rec: ImageRecord = {
           id: data.id,
           url: toAbsoluteUrl(
-            data.imageUrl ||
-              data.image_url ||
-              data.result_image_path
+            data.imageUrl || data.image_url || data.result_image_path
           ),
           prompt: data.prompt || "",
           style: data.style || style,
@@ -387,9 +391,14 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
       <header className="bg-white dark:bg-gray-800 border-b dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-16">
-            <motion.div whileHover={{ scale: 1.05 }} className="flex items-center gap-2">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="flex items-center gap-2"
+            >
               <Sparkles className="w-6 h-6 text-indigo-500 dark:text-cyan-400" />
-              <span className="text-xl font-bold dark:text-white">Image Studio</span>
+              <span className="text-xl font-bold dark:text-white">
+                Image Studio
+              </span>
             </motion.div>
 
             <div className="flex items-center gap-3">
@@ -430,9 +439,11 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
       {/* Upload + Generate */}
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
           {/* Upload Area */}
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl border dark:border-gray-700">
               <h2 className="text-xl font-bold dark:text-white mb-4 flex items-center gap-2">
                 <Upload className="w-5 h-5" />
@@ -461,7 +472,11 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
                 />
 
                 {uploadedImage ? (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative">
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="relative"
+                  >
                     <img
                       src={uploadedImage}
                       alt="Uploaded"
@@ -484,8 +499,12 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
                 ) : (
                   <div>
                     <ImageIcon className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4" />
-                    <p className="dark:text-gray-200 font-medium mb-2">Drop or click to upload</p>
-                    <p className="text-gray-500 dark:text-gray-400 text-sm">PNG/JPEG, Less Than 10MB</p>
+                    <p className="dark:text-gray-200 font-medium mb-2">
+                      Drop or click to upload
+                    </p>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">
+                      PNG/JPEG, Less Than 10MB
+                    </p>
                   </div>
                 )}
               </div>
@@ -509,7 +528,10 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
           </motion.div>
 
           {/* Generate Area */}
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
             <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl border dark:border-gray-700">
               <h2 className="text-xl font-bold dark:text-white mb-4 flex items-center gap-2">
                 <Wand2 className="w-5 h-5" />
@@ -518,7 +540,9 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
 
               <div className="space-y-4">
                 <div>
-                  <label className="dark:text-gray-300 text-sm mb-1 block">Prompt</label>
+                  <label className="dark:text-gray-300 text-sm mb-1 block">
+                    Prompt
+                  </label>
                   <textarea
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
@@ -529,7 +553,9 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
                 </div>
 
                 <div>
-                  <label className="dark:text-gray-300 text-sm mb-1 block">Style</label>
+                  <label className="dark:text-gray-300 text-sm mb-1 block">
+                    Style
+                  </label>
                   <select
                     value={style}
                     onChange={(e) => setStyle(e.target.value as AllowedStyle)}
@@ -586,8 +612,14 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
 
         {/* HISTORY SCROLLER */}
         {history.length > 0 && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-8 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border dark:border-gray-700">
-            <h3 className="text-lg font-bold dark:text-white mb-4">Recent Images</h3>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="mt-8 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border dark:border-gray-700"
+          >
+            <h3 className="text-lg font-bold dark:text-white mb-4">
+              Recent Images
+            </h3>
 
             <div className="flex gap-4 overflow-x-auto pb-2">
               {history.map((item) => (

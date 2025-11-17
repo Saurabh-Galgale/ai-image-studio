@@ -21,7 +21,7 @@ describe("ProtectedRoute", () => {
       </MemoryRouter>
     );
 
-    expect(getByText("redirect /studio-login")).toBeInTheDocument();
+    expect(getByText("redirect /")).toBeInTheDocument();
   });
 
   test("renders children when token exists", () => {
