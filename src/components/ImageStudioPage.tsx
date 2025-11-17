@@ -83,9 +83,6 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
   const [style, setStyle] = useState<AllowedStyle>(ALLOWED_STYLES[0]);
 
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedImage, setGeneratedImage] = useState<ImageRecord | null>(
-    null
-  );
 
   const [showModal, setShowModal] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
@@ -339,7 +336,6 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
           status: data.status || "completed",
         };
 
-        setGeneratedImage(rec);
         setHistory((prev) => [rec, ...prev].slice(0, 5));
         setToast({ message: "Image generated!", type: "success" });
       }
@@ -351,7 +347,7 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
     } finally {
       setIsGenerating(false);
     }
-  }, [uploadedFile, prompt, style, isResizing]);
+  }, [uploadedFile, prompt, style]);
 
   const handleRetry = () => {
     setRetryCount((p) => p + 1);
@@ -365,7 +361,6 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
   };
 
   const handleHistoryClick = (item: ImageRecord) => {
-    setGeneratedImage(item);
     setPrompt(item.prompt);
     setStyle((item.style as AllowedStyle) || ALLOWED_STYLES[0]);
   };
@@ -631,6 +626,7 @@ const ImageStudioPage = ({ onLogout }: ImageStudioProps) => {
                 >
                   <img
                     src={item.url}
+                    alt="Old-generated-image"
                     className="w-24 h-24 rounded-lg object-cover border dark:border-gray-600 shadow"
                   />
                 </motion.div>
