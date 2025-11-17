@@ -5,6 +5,8 @@ import { Sun, Moon } from "lucide-react";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignUpForm";
 import FloatingParticles from "./FloatingParticles";
+import ImageStudioPage from "./ImageStudioPage";
+import History1 from "./HistoryPage";
 import { useTheme } from "../context/ThemeContext";
 
 export default function LandingPage() {
@@ -14,7 +16,7 @@ export default function LandingPage() {
     "login" | "studio" | "history"
   >("login");
 
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [history] = useState<any[]>([]);
 
   useEffect(() => {
@@ -155,5 +157,24 @@ export default function LandingPage() {
     </div>
   );
 
-  return <>{currentPage === "login" && <AuthPage />}</>;
+  return (
+    <>
+      {currentPage === "login" && <AuthPage />}
+
+      {currentPage === "studio" && (
+        <ImageStudioPage
+          onLogout={handleLogout}
+          onNavigateToHistory={handleNavigateToHistory}
+        />
+      )}
+
+      {currentPage === "history" && (
+        <History1
+          onLogout={handleLogout}
+          //   onBackToStudio={handleBackToStudio}
+          history={history}
+        />
+      )}
+    </>
+  );
 }

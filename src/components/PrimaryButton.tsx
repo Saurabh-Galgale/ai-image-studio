@@ -7,7 +7,7 @@ interface PrimaryButtonProps {
   onClick?: MouseEventHandler<HTMLButtonElement>;
   loading?: boolean;
   type?: "button" | "submit" | "reset";
-  disabled?: boolean;
+  disabled?: boolean
 }
 
 export default function PrimaryButton({
