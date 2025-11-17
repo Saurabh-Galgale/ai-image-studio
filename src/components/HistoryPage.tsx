@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -60,91 +60,99 @@ export default function HistoryPage({
 
   const goToImageStudio = () => navigate("/studio");
 
-  const handleUnauthorized = (message?: string) => {
-    setToast({
-      message: message || "Session expired. Please login again.",
-      type: "danger",
-    });
-    onLogout?.();
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/");
-  };
+  // make handleUnauthorized stable so it can be used safely in fetchHistory's deps
+  const handleUnauthorized = useCallback(
+    (message?: string) => {
+      setToast({
+        message: message || "Session expired. Please login again.",
+        type: "danger",
+      });
+      onLogout?.();
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      navigate("/");
+    },
+    [navigate, onLogout]
+  );
 
-  const fetchHistory = async (opts = { limit: 5 }) => {
-    const token = localStorage.getItem("token") || "";
-    setLoading(true);
-    setToast(null);
+  // memoize fetchHistory so useEffect can depend on it and ESLint is satisfied.
+  const fetchHistory = useCallback(
+    async (opts = { limit: 5 }) => {
+      const token = localStorage.getItem("token") || "";
+      setLoading(true);
+      setToast(null);
 
-    try {
-      const resp: any = await axios.get(
-        `${GET_HISTORY_URL}?limit=${opts.limit}`,
-        {
-          headers: { Authorization: token ? `Bearer ${token}` : "" },
-          timeout: 10000,
-        }
-      );
+      try {
+        const resp: any = await axios.get(
+          `${GET_HISTORY_URL}?limit=${opts.limit}`,
+          {
+            headers: { Authorization: token ? `Bearer ${token}` : "" },
+            timeout: 10000,
+          }
+        );
 
-      if (Array.isArray(resp.data)) {
-        const mapped: ImageRecord[] = resp.data.map((r: any) => ({
-          id: r.id,
-          url: toAbsoluteUrl(
-            r.imageUrl ||
-              r.image_url ||
-              r.result_image_path ||
-              r.input_image_path
-          ),
-          prompt: r.prompt || "",
-          style: r.style || "",
-          timestamp: r.createdAt || r.created_at || "",
-          status: r.status || "",
-        }));
-        setItems(mapped);
-      } else {
-        setToast({
-          message: "Unexpected response format from server",
-          type: "danger",
-        });
-      }
-    } catch (err: any) {
-      if (err.response) {
-        const status = err.response.status;
-        const data = err.response.data || {};
-
-        if (status === 400) {
-          setToast({
-            message: data?.error?.message || "Invalid request",
-            type: "danger",
-          });
-        } else if (status === 401) {
-          handleUnauthorized(data?.error?.message || "Unauthorized");
-          return;
+        if (Array.isArray(resp.data)) {
+          const mapped: ImageRecord[] = resp.data.map((r: any) => ({
+            id: r.id,
+            url: toAbsoluteUrl(
+              r.imageUrl ||
+                r.image_url ||
+                r.result_image_path ||
+                r.input_image_path
+            ),
+            prompt: r.prompt || "",
+            style: r.style || "",
+            timestamp: r.createdAt || r.created_at || "",
+            status: r.status || "",
+          }));
+          setItems(mapped);
         } else {
           setToast({
-            message: data?.error?.message || `Server error (${status})`,
+            message: "Unexpected response format from server",
             type: "danger",
           });
         }
-      } else if (err.request) {
-        setToast({
-          message: "No response from server. Check your network.",
-          type: "danger",
-        });
-      } else {
-        setToast({
-          message: `Request failed: ${err.message}`,
-          type: "danger",
-        });
+      } catch (err: any) {
+        if (err.response) {
+          const status = err.response.status;
+          const data = err.response.data || {};
+
+          if (status === 400) {
+            setToast({
+              message: data?.error?.message || "Invalid request",
+              type: "danger",
+            });
+          } else if (status === 401) {
+            handleUnauthorized(data?.error?.message || "Unauthorized");
+            return;
+          } else {
+            setToast({
+              message: data?.error?.message || `Server error (${status})`,
+              type: "danger",
+            });
+          }
+        } else if (err.request) {
+          setToast({
+            message: "No response from server. Check your network.",
+            type: "danger",
+          });
+        } else {
+          setToast({
+            message: `Request failed: ${err.message}`,
+            type: "danger",
+          });
+        }
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
       }
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
+    },
+    [handleUnauthorized]
+  );
 
   useEffect(() => {
     fetchHistory({ limit: 5 });
-  }, []);
+  }, [fetchHistory]);
 
   const handleRefresh = () => {
     setRefreshing(true);
