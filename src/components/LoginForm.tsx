@@ -9,7 +9,7 @@ import SecondaryButton from "./SecondaryButton";
 import Toast from "./Toast";
 import { Mail, Lock, Sparkles } from "lucide-react";
 
-const API_URL = "http://localhost:4000/auth/login";
+const API_URL = "https://ai-image-studio-be.onrender.com/auth/login";
 
 interface LoginFormProps {
   onSwitchToSignup: () => void;
@@ -118,9 +118,7 @@ export default function LoginForm({
             setErrors((prev) => ({ ...prev, ...fieldErrors }));
 
             const firstMsg =
-              details[0]?.message ||
-              details[0]?.msg ||
-              "Validation failed";
+              details[0]?.message || details[0]?.msg || "Validation failed";
 
             setToast({ message: firstMsg, type: "danger" });
           } else {
@@ -131,8 +129,7 @@ export default function LoginForm({
           }
         } else if (status === 401) {
           setToast({
-            message:
-              data?.error?.message || "Invalid email or password",
+            message: data?.error?.message || "Invalid email or password",
             type: "danger",
           });
         } else {
@@ -157,8 +154,7 @@ export default function LoginForm({
     }
   };
 
-  const isFormValid =
-    /\S+@\S+\.\S+/.test(email) && password.length >= 8;
+  const isFormValid = /\S+@\S+\.\S+/.test(email) && password.length >= 8;
 
   return (
     <motion.div
@@ -227,17 +223,12 @@ export default function LoginForm({
           {loading ? "Signing in..." : "Sign In"}
         </PrimaryButton>
 
-        <SecondaryButton
-          onClick={onGuestLogin}
-          icon={Sparkles}
-        >
+        <SecondaryButton onClick={onGuestLogin} icon={Sparkles}>
           Continue as Guest
         </SecondaryButton>
 
         <div className="text-center">
-          <span className="dark:text-gray-300">
-            Don't have an account?{" "}
-          </span>
+          <span className="dark:text-gray-300">Don't have an account? </span>
           <button
             type="button"
             onClick={onSwitchToSignup}

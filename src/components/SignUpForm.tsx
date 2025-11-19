@@ -8,10 +8,10 @@ import SecondaryButton from "./SecondaryButton";
 import Toast from "./Toast";
 import { User, Mail, Lock, Sparkles } from "lucide-react";
 
-const API_URL = "http://localhost:4000/auth/signup";
+const API_URL = "https://ai-image-studio-be.onrender.com/auth/signup";
 
 interface SignupFormProps {
-  setIsLogin: (v: boolean) => void;   // ✅ FIX ADDED
+  setIsLogin: (v: boolean) => void; // ✅ FIX ADDED
   onSwitchToLogin: () => void;
   onGuestLogin: () => void;
 }
@@ -28,7 +28,7 @@ interface ToastType {
 }
 
 export default function SignupForm({
-  setIsLogin,      // now available
+  setIsLogin, // now available
   onSwitchToLogin,
   onGuestLogin,
 }: SignupFormProps) {
@@ -45,7 +45,8 @@ export default function SignupForm({
     const newErrors: FieldErrors = {};
     if (!name) newErrors.name = "Name is required";
     if (!email) newErrors.email = "Email is required";
-    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Invalid email format";
+    else if (!/\S+@\S+\.\S+/.test(email))
+      newErrors.email = "Invalid email format";
     if (!password) newErrors.password = "Password is required";
     else if (password.length < 8)
       newErrors.password = "Password must be at least 8 characters";
@@ -107,7 +108,10 @@ export default function SignupForm({
 
           if (errCode === "USER_EXISTS") {
             setErrors({ email: "User already exists with this email" });
-            setToast({ message: errMsg || "User already exists", type: "danger" });
+            setToast({
+              message: errMsg || "User already exists",
+              type: "danger",
+            });
             return;
           }
 
@@ -123,7 +127,7 @@ export default function SignupForm({
 
               const message = d.message || d.msg || "Invalid input";
 
-              (fieldErrors as Record<string, string>)[field] = message;   // ✅ SAFE
+              (fieldErrors as Record<string, string>)[field] = message; // ✅ SAFE
             });
 
             setErrors(fieldErrors);
@@ -244,7 +248,7 @@ export default function SignupForm({
           </span>
           <button
             type="button"
-            onClick={() => setIsLogin(true)}   // ✅ works now
+            onClick={() => setIsLogin(true)} // ✅ works now
             className="text-indigo-500 dark:text-white font-semibold hover:underline"
             disabled={loading}
           >

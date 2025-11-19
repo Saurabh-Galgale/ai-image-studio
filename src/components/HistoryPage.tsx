@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import Toast from "./Toast";
 
-const API_BASE = "http://localhost:4000";
+const API_BASE = "https://ai-image-studio-be.onrender.com";
 const GET_HISTORY_URL = `${API_BASE}/generations`;
 
 interface ImageRecord {
